@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: Trading Platform Backend
+  webflux:
+    base-path: /trading
+
+keycloak:
+  client:
+    id: ${KC_CLIENT_ID:1234}
+    secret: ${KC_CLIENT_SECRET:1234}
+
+auth:
+    success-url: ${FRONTEND_ADDR:http://localhost:3000/}
+    failure-url: ${FRONTEND_ADDR:http://localhost:3000/}/autherr
+    keycloak:
+      base-url: ${KEYCLOAK_ADDR:http://localhost:8081}/realms
+      realm: trading-platform
+
+cors:
+  allowed:
+    origin: ${FRONTEND_ADDR:http://localhost:3000/}

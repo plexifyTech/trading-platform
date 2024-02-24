@@ -32,6 +32,15 @@
       "react-app/jest"
     ]
   },
+  "devDependencies": {
+    "typescript": "^4.6.4",
+    "@types/react": "^18.0.9",
+    "@types/react-dom": "^18.0.4",
+    "ts-loader": "^9.3.0",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
+    "prettier": "3.2.5"
+  },
   "browserslist": {
     "production": [
       ">0.2%",
@@ -43,8 +52,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "prettier": "3.2.5"
   }
 }

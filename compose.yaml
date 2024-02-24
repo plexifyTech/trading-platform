@@ -1,6 +1,5 @@
 services:
-  mongodb:
-    container_name: tp-mongo_db
+  tpmongodb:
     image: mongo
     environment:
       MONGO_INITDB_ROOT_USERNAME: dummyuser
@@ -9,8 +8,7 @@ services:
       - mongo:/data
     ports:
       - 27017:27017
-  keycloak:
-    container_name: tp-keycloak
+  tpkeycloak:
     image: keycloak/keycloak:23.0
     environment:
       KEYCLOAK_ADMIN: admin
@@ -25,18 +23,22 @@ services:
       - --import-realm
     volumes:
       - ./keycloak/themes/trading-platform:/opt/keycloak/themes/trading-platform
-  tp-backend:
+      - ./keycloak/tp-dev-realm.json:/opt/keycloak/data/import/realm.json
+  tpbackend:
     depends_on:
-      - mongodb
-      - keycloak
-    container_name: tp-backend
+      - tpmongodb
+      - tpkeycloak
     build: ./backend
+    environment:
+      KC_CLIENT_ID: trading-platform-oauth-client
+      KC_CLIENT_SECRET: Z5laOBtS69tapQfzy1i6eQ5EpTDxLEHh
+      FRONTEND_ADDR: http://tpfrontend:3000
+      KEYCLOAK_ADDR: http://tpkeycloak:8080
     ports:
       - 8080:8080
-  tp-frontend:
+  tpfrontend:
     depends_on:
-      - tp-backend
-    container_name: tp-frontend
+      - tpbackend
     build: ./frontend
     ports:
       - 3000:3000
