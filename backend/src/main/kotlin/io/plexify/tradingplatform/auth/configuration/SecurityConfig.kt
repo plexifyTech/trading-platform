@@ -1,5 +1,6 @@
 package io.plexify.tradingplatform.auth.configuration
 
+import io.plexify.tradingplatform.config.PathConfig
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
@@ -17,12 +18,13 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource
 @Configuration
 @EnableWebFluxSecurity
 class SecurityConfig(
-    private val authConfig: AuthConfig
+    private val authConfig: AuthConfig,
+    private val pathConfig: PathConfig
 ) {
     @Bean
     fun httpSecurity(http: ServerHttpSecurity): SecurityWebFilterChain {
         http
-            .configureAuthorizeExchanges()
+            .configureAuthorizeExchanges(pathConfig)
             .configureOAuth2Login(authConfig)
             .securityContextRepository(WebSessionServerSecurityContextRepository())
             .configureCsrf()

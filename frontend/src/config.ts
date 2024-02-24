@@ -4,3 +4,6 @@ export const loginUrl = `${backendBaseUrl}/oauth2/authorization/keycloak`
 export const logoutUrl = `${backendBaseUrl}/logout`;
 export const userUrl = `${backendBaseUrl}/auth/user`
 export const csrfTokenUrl = `${backendBaseUrl}/auth/token`;
+
+export const privTradingApiUrl = `${backendBaseUrl}/api/v1`
+export const pubTradingApiUrl = `${backendBaseUrl}/api/v1/pub`

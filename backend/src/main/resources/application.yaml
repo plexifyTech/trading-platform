@@ -19,3 +19,7 @@ auth:
 cors:
   allowed:
     origin: ${FRONTEND_ADDR:http://localhost:3000/}
+
+api:
+  base-path: /api/v1
+  public-base-path: /api/v1/pub

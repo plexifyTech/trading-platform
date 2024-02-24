@@ -1,6 +1,7 @@
 package io.plexify.tradingplatform.auth.configuration
 
 import io.plexify.tradingplatform.auth.filter.AttachCsrfTokenFilter
+import io.plexify.tradingplatform.config.PathConfig
 import org.springframework.boot.web.server.Cookie
 import org.springframework.http.HttpStatus
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder
@@ -8,7 +9,6 @@ import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.web.server.authentication.HttpStatusServerEntryPoint
 import org.springframework.security.web.server.authentication.RedirectServerAuthenticationFailureHandler
 import org.springframework.security.web.server.authentication.RedirectServerAuthenticationSuccessHandler
-import org.springframework.security.web.server.authentication.logout.RedirectServerLogoutSuccessHandler
 import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository
 import org.springframework.security.web.server.csrf.XorServerCsrfTokenRequestAttributeHandler
 import java.net.URI
@@ -16,10 +16,10 @@ import java.net.URI
 /**
  * Require authentication globally on any endpoint except /login or /logout paths
  * */
-fun ServerHttpSecurity.configureAuthorizeExchanges(): ServerHttpSecurity {
+fun ServerHttpSecurity.configureAuthorizeExchanges(pathConfig: PathConfig): ServerHttpSecurity {
     return this.authorizeExchange { exchanges ->
         exchanges
-            .pathMatchers("/login**", "/logout**")
+            .pathMatchers("/login**", "/logout**", "${pathConfig.apiPublicPath}/**")
             .permitAll()
             .anyExchange()
             .authenticated()
