@@ -1,73 +1,89 @@
-import React, {useEffect} from "react";
-import {pubTradingApiUrl} from "../../config";
-import {assetApiCalls} from "../../api/assetApiCalls";
-import {CenertedDiv} from "../Common/styles";
-import {CircularProgress, Container} from "@mui/material";
-import {Asset} from "../../api/types";
-import AssetDetails from "./AssetDetails";
+import React, { useEffect, useRef } from 'react';
+import { pubTradingApiUrl } from '../../config';
+import { fetchAssets } from '../../api/assetApiCalls';
+import { CenertedDiv } from '../Common/styles';
+import { CircularProgress, Container, Stack, Typography } from '@mui/material';
+import { Asset } from '../../api/types';
+import AssetDetails from './AssetDetails';
+import { AxiosError } from 'axios';
 
-//this is very ugly but using useState sadly did not work
-let eventSource: EventSource | undefined
 const Marketplace = () => {
-    const [assets, setAssets] = React.useState<Asset[]>();
-    const [isInitialized, setIsInitialized] = React.useState<boolean>(false);
+  const [assets, setAssets] = React.useState<Asset[]>([]);
+  const [isInitialized, setIsInitialized] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<string>();
+  const eventSourceRef = useRef<EventSource | null>(null);
 
-    const  subscribeToAssets = () => {
-        const es = new EventSource(`${pubTradingApiUrl}/assets/stream`)
-        es.onmessage = (e: MessageEvent) => {
-            const data = JSON.parse(e.data)
-            if (assets) {
-                //TODO Map access would be nicer here. May try again later...
-                const idx = assets.findIndex((a) => a.id === data.id );
-                assets[idx]?.fields.details.prices.push(data.price)
-                setAssets([...assets])
-            }
-        };
-        es.onerror = (_) => {
-            es.close()
-        };
-        return es
+  const subscribeToAssets = () => {
+    const es = new EventSource(`${pubTradingApiUrl}/assets/stream`);
+    es.onmessage = (e: MessageEvent) => {
+      const data = JSON.parse(e.data);
+      setAssets((currentAssets: Asset[]) => {
+        const updatedAssets = [...currentAssets];
+        const assetIndex = updatedAssets.findIndex((a) => a.id === data.id);
+        if (assetIndex !== -1) {
+          const updatedAsset = { ...updatedAssets[assetIndex] };
+          updatedAsset.fields.details.prices.push(data.price);
+          updatedAssets[assetIndex] = updatedAsset;
+        }
+        return updatedAssets;
+      });
+    };
+    es.onerror = () => {
+      es.close();
+    };
+    return es;
+  };
+
+  useEffect(() => {
+    if (assets.length == 0) {
+      fetchAssets()
+        .then((res) => {
+          if (res != null) {
+            setAssets(res);
+          }
+        })
+        .catch((err: AxiosError) => setError(err.message))
+        .finally(() => setIsInitialized(true));
     }
+  }, []);
 
-    useEffect(() => {
-        if (!assets) {
-            assetApiCalls()
-                .then((res) => {
-                    if (res){
-                        setAssets(res)
-                    }
-                })
-                .finally(() => setIsInitialized(true))
-        }
-    }, [assets]);
+  useEffect(() => {
+    if (isInitialized && eventSourceRef.current == null) {
+      eventSourceRef.current = subscribeToAssets();
+    }
+    return () => {
+      eventSourceRef.current?.close();
+    };
+  }, [isInitialized]);
 
-    useEffect(() => {
-        if (isInitialized && !eventSource){
-            eventSource = subscribeToAssets()
-        }
-    }, [isInitialized]);
-
-    //close stream on component unmount
-    useEffect(() => {
-        return () => {
-            if (eventSource){
-                eventSource.close()
-                eventSource = undefined
-            }
-        }
-    }, []);
-
+  if (error != null) {
     return (
-        <Container>
-            {assets ? assets.map((asset: Asset) => (
-                <AssetDetails key={asset.id} {...asset.fields}/>
-            )) : (
-                    <CenertedDiv>
-                        <CircularProgress/>
-                    </CenertedDiv>
-            )}
-        </Container>
-    )
+      <Container>
+        <CenertedDiv>
+          <Stack>
+            <Typography variant='h3'>
+              Sorry! This app encountered a problem...
+            </Typography>
+            <Typography variant='h6'>{error}</Typography>
+          </Stack>
+        </CenertedDiv>
+      </Container>
+    );
+  }
+
+  return (
+    <Container>
+      {assets.length > 0 ? (
+        assets.map((asset: Asset) => (
+          <AssetDetails key={asset.id} {...asset.fields} />
+        ))
+      ) : (
+        <CenertedDiv>
+          <CircularProgress />
+        </CenertedDiv>
+      )}
+    </Container>
+  );
 };
 
 export default Marketplace;
