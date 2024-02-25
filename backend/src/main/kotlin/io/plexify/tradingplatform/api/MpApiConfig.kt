@@ -2,6 +2,7 @@ package io.plexify.tradingplatform.api
 
 
 import io.plexify.tradingplatform.api.marketplace.handler.AssetHandler
+import io.plexify.tradingplatform.api.marketplace.handler.PublicAssetHandler
 import io.plexify.tradingplatform.config.PathConfig
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -17,7 +18,7 @@ class MpApiConfig(
     private val pathConfig: PathConfig
 ) {
     @Bean
-    fun sseRouter(assetHandler: AssetHandler) =
+    fun sseRouter(assetHandler: PublicAssetHandler) =
         router {
             accept(MediaType.TEXT_EVENT_STREAM)
                 .nest {
@@ -26,10 +27,16 @@ class MpApiConfig(
         }
 
     @Bean
-    fun assetRouter(assetHandler: AssetHandler) = coRouter {
+    fun assetRouter(publicHandler: PublicAssetHandler, assetHandler: AssetHandler) = coRouter {
         accept(MediaType.APPLICATION_JSON)
             .nest {
-                GET("${pathConfig.apiPublicPath}/$ASSET_PATH", assetHandler::listAssets)
+                pathConfig.apiPublicPath.nest {
+                    GET("/$ASSET_PATH", publicHandler::listAssets)
+                }
+                pathConfig.apiBasePath.nest {
+                    GET("/$ASSET_PATH/portfolio", assetHandler::getPortfolio)
+                    PUT("/$ASSET_PATH/{id}/buy", assetHandler::buyAsset)
+                }
             }
     }
 

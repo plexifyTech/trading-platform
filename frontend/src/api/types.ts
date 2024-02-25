@@ -5,14 +5,14 @@ interface Asset{
 
 interface AssetFields {
     details: AssetData,
-    buyUrl: String,
-    sellUrl: String
+    buyUrl: string,
+    sellUrl: string
 }
 
 interface AssetData {
     name: string
     availableAssets: number,
-    price: number[],
+    prices: number[],
 }
 
 export type {

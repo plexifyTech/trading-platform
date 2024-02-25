@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
 import {pubTradingApiUrl} from "../../config";
-import {fetchAssets} from "../../api/fetchAssets";
+import {assetApiCalls} from "../../api/assetApiCalls";
 import {CenertedDiv} from "../Common/styles";
 import {CircularProgress, Container} from "@mui/material";
 import {Asset} from "../../api/types";
@@ -12,23 +12,26 @@ const Marketplace = () => {
     const [assets, setAssets] = React.useState<Asset[]>();
     const [isInitialized, setIsInitialized] = React.useState<boolean>(false);
 
-    function subscribeToAssets() {
+    const  subscribeToAssets = () => {
         const es = new EventSource(`${pubTradingApiUrl}/assets/stream`)
         es.onmessage = (e: MessageEvent) => {
             const data = JSON.parse(e.data)
             if (assets) {
                 //TODO Map access would be nicer here. May try again later...
                 const idx = assets.findIndex((a) => a.id === data.id );
-                assets[idx]?.fields.details.price.push(data.price)
+                assets[idx]?.fields.details.prices.push(data.price)
                 setAssets([...assets])
             }
+        };
+        es.onerror = (_) => {
+            es.close()
         };
         return es
     }
 
     useEffect(() => {
         if (!assets) {
-            fetchAssets()
+            assetApiCalls()
                 .then((res) => {
                     if (res){
                         setAssets(res)
@@ -42,7 +45,7 @@ const Marketplace = () => {
         if (isInitialized && !eventSource){
             eventSource = subscribeToAssets()
         }
-    });
+    }, [isInitialized]);
 
     //close stream on component unmount
     useEffect(() => {
@@ -52,7 +55,7 @@ const Marketplace = () => {
                 eventSource = undefined
             }
         }
-    }, [])
+    }, []);
 
     return (
         <Container>

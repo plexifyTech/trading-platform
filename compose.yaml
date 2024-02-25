@@ -1,15 +1,6 @@
 version: '3'
 
 services:
-  tpmongodb:
-    image: mongo
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: dummyuser
-      MONGO_INITDB_ROOT_PASSWORD: 1234
-    volumes:
-      - mongo:/data
-    ports:
-      - "27017:27017"
   tpkeycloak:
     image: keycloak/keycloak:23.0
     environment:
@@ -28,7 +19,6 @@ services:
       - ./keycloak/tp-dev-realm.json:/opt/keycloak/data/import/realm.json
   tpbackend:
     depends_on:
-      - tpmongodb
       - tpkeycloak
     build: ./backend
     deploy:
@@ -56,5 +46,4 @@ services:
       - ./frontend
       - /frontend/node_modules
 volumes:
-  mongo: {}
   keycloak: {}

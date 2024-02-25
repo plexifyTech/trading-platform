@@ -8,6 +8,8 @@ object PriceCalculator {
         val hash = name.chars().reduce(0) { a: Int, b: Int -> (a shl 5) - a + b }
         val amplitude = 100
         val n = System.currentTimeMillis()
-        return abs(3 * sin((2 * hash * n).toDouble())) % amplitude
+        val regularPrice = abs(3 * sin((2 * hash * n).toDouble())) % amplitude
+        //inflation
+        return regularPrice * 10000
     }
 }

@@ -9,24 +9,26 @@ import java.util.UUID
 class SampleDataProvider {
     val sampleData = createSampleData()
 
-    private fun createSampleData(): HashMap<String, Asset> {
-        val res = hashMapOf<String, Asset>()
-        for (i in 1..20){
-            val id = uuid()
-            val name = names[i]!!
-            res[id] = Asset(
-                id = uuid(),
-                name = name,
-                availableAssets = (0..10).random(),
-                price = listOf(generateStockPrice(name))
-            )
-        }
-        return res
-    }
-
-    private fun uuid() = UUID.randomUUID().toString()
-
     companion object{
+
+        private fun createSampleData(): HashMap<String, Asset> {
+            val res = hashMapOf<String, Asset>()
+            for (i in 1..20){
+                val id = uuid()
+                val name = names[i]!!
+                res[id] = Asset(
+                    id = id,
+                    name = name,
+                    prices = listOf(generateStockPrice(name))
+                ).apply {
+                    availableAssets = (0..10).random()
+                }
+            }
+            return res
+        }
+
+        private fun uuid() = UUID.randomUUID().toString()
+
         private val names = hashMapOf(
             1 to "Hagenbecks Tierpark",
             2 to "Willys Würstenbude",

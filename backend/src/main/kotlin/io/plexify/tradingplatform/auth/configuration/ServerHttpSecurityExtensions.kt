@@ -1,6 +1,7 @@
 package io.plexify.tradingplatform.auth.configuration
 
 import io.plexify.tradingplatform.auth.filter.AttachCsrfTokenFilter
+import io.plexify.tradingplatform.auth.service.UserService
 import io.plexify.tradingplatform.config.PathConfig
 import org.springframework.boot.web.server.Cookie
 import org.springframework.http.HttpStatus
@@ -8,7 +9,6 @@ import org.springframework.security.config.web.server.SecurityWebFiltersOrder
 import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.web.server.authentication.HttpStatusServerEntryPoint
 import org.springframework.security.web.server.authentication.RedirectServerAuthenticationFailureHandler
-import org.springframework.security.web.server.authentication.RedirectServerAuthenticationSuccessHandler
 import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository
 import org.springframework.security.web.server.csrf.XorServerCsrfTokenRequestAttributeHandler
 import java.net.URI
@@ -29,11 +29,11 @@ fun ServerHttpSecurity.configureAuthorizeExchanges(pathConfig: PathConfig): Serv
 /**
  * Define OAuth as the auth method and customize default Spring Boot OAuth2-client behavior
  * */
-fun ServerHttpSecurity.configureOAuth2Login(authConfig: AuthConfig): ServerHttpSecurity {
+fun ServerHttpSecurity.configureOAuth2Login(authConfig: AuthConfig, userService: UserService): ServerHttpSecurity {
     return this
         .oauth2Login { oauth2Login: ServerHttpSecurity.OAuth2LoginSpec ->
             oauth2Login
-                .authenticationSuccessHandler(RedirectServerAuthenticationSuccessHandler(authConfig.authSuccessUrl))
+                .authenticationSuccessHandler(UserAwareAuthSuccessHandler(authConfig.authSuccessUrl, userService))
                 .authenticationFailureHandler(RedirectServerAuthenticationFailureHandler(authConfig.authFailureUrl))
         }.exceptionHandling { exceptions ->
             exceptions

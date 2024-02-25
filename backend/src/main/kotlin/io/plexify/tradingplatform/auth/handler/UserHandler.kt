@@ -19,7 +19,7 @@ class UserHandler(
     private val csrfTokenService: CsrfTokenExtractorService
 ) {
     suspend fun getUser(request: ServerRequest): ServerResponse {
-        return userService.getUser()
+        return userService.getUserDetails()
             .flatMap { userDto -> ok()
                 .body(userDto.toMono())
             }
