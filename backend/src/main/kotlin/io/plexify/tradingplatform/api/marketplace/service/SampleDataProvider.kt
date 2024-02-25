@@ -17,7 +17,8 @@ class SampleDataProvider {
             res[id] = Asset(
                 id = uuid(),
                 name = name,
-                price = generateStockPrice(name)
+                availableAssets = (0..10).random(),
+                price = listOf(generateStockPrice(name))
             )
         }
         return res

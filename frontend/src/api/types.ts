@@ -1,9 +1,21 @@
 interface Asset{
     id: string,
+    fields: AssetFields,
+}
+
+interface AssetFields {
+    details: AssetData,
+    buyUrl: String,
+    sellUrl: String
+}
+
+interface AssetData {
     name: string
-    price: number,
+    availableAssets: number,
+    price: number[],
 }
 
 export type {
-    Asset
+    Asset,
+    AssetFields
 }
