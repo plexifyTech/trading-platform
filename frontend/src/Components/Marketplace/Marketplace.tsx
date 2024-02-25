@@ -6,22 +6,24 @@ import {CircularProgress, Container} from "@mui/material";
 import {Asset} from "../../api/types";
 import AssetDetails from "./AssetDetails";
 
+//this is very ugly but using useState sadly did not work
+let eventSource: EventSource | undefined
 const Marketplace = () => {
     const [assets, setAssets] = React.useState<Asset[]>();
     const [isInitialized, setIsInitialized] = React.useState<boolean>(false);
-    let eventSource
 
     function subscribeToAssets() {
-        eventSource = new EventSource(`${pubTradingApiUrl}/assets/stream`)
-        eventSource.onmessage = (e: MessageEvent) => {
+        const es = new EventSource(`${pubTradingApiUrl}/assets/stream`)
+        es.onmessage = (e: MessageEvent) => {
             const data = JSON.parse(e.data)
             if (assets) {
                 //TODO Map access would be nicer here. May try again later...
                 const idx = assets.findIndex((a) => a.id === data.id );
                 assets[idx]?.fields.details.price.push(data.price)
-                setAssets(assets)
+                setAssets([...assets])
             }
         };
+        return es
     }
 
     useEffect(() => {
@@ -37,23 +39,31 @@ const Marketplace = () => {
     }, [assets]);
 
     useEffect(() => {
-        if (assets && isInitialized){
-            subscribeToAssets()
+        if (isInitialized && !eventSource){
+            eventSource = subscribeToAssets()
         }
-    }, [assets, isInitialized]);
+    });
+
+    //close stream on component unmount
+    useEffect(() => {
+        return () => {
+            if (eventSource){
+                eventSource.close()
+                eventSource = undefined
+            }
+        }
+    }, [])
 
     return (
-        <>
+        <Container>
             {assets ? assets.map((asset: Asset) => (
                 <AssetDetails key={asset.id} {...asset.fields}/>
             )) : (
-                <Container>
                     <CenertedDiv>
                         <CircularProgress/>
                     </CenertedDiv>
-                </Container>
             )}
-        </>
+        </Container>
     )
 };
 
