@@ -34,8 +34,9 @@ class MpApiConfig(
                     GET("/$ASSET_PATH", publicHandler::listAssets)
                 }
                 pathConfig.apiBasePath.nest {
-                    GET("/$ASSET_PATH/portfolio", assetHandler::getPortfolio)
+                    GET("/$ASSET_PATH/account", assetHandler::getAccountData)
                     PUT("/$ASSET_PATH/{id}/buy", assetHandler::buyAsset)
+                    PUT("/$ASSET_PATH/{id}/sell", assetHandler::sellAsset)
                 }
             }
     }

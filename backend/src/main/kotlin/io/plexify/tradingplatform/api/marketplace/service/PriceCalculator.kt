@@ -10,6 +10,6 @@ object PriceCalculator {
         val n = System.currentTimeMillis()
         val regularPrice = abs(3 * sin((2 * hash * n).toDouble())) % amplitude
         //inflation
-        return regularPrice * 10000
+        return regularPrice * 5000
     }
 }

@@ -5,3 +5,4 @@ export const logoutUrl = `${backendBaseUrl}/logout`;
 export const userUrl = `${backendBaseUrl}/auth/user`;
 export const csrfTokenUrl = `${backendBaseUrl}/auth/token`;
 export const pubTradingApiUrl = `${backendBaseUrl}/api/v1/pub`;
+export const privTradingApiUrl = `${backendBaseUrl}/api/v1`;

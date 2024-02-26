@@ -7,6 +7,5 @@ data class AssetResponse(
 
 data class AssetFields(
     val details: Asset,
-    val buyUrl: String,
-    val sellUrl: String
+    val buyUrl: String
 )

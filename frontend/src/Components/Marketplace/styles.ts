@@ -14,4 +14,12 @@ const FixedGrid = styled.div`
   text-align: center;
 `;
 
-export { FixedGrid };
+const Wrapper = styled.div`
+  display: flex;
+  @media only screen and (max-width: 1470px) {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+`;
+
+export { FixedGrid, Wrapper };

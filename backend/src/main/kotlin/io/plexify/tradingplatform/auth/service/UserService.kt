@@ -1,14 +1,14 @@
 package io.plexify.tradingplatform.auth.service
 
-import io.plexify.tradingplatform.api.marketplace.data.entity.User
-import io.plexify.tradingplatform.api.marketplace.data.repository.MockUserRepository
+import io.plexify.tradingplatform.api.marketplace.data.entity.Account
+import io.plexify.tradingplatform.api.marketplace.data.repository.MockAccountRepository
 import io.plexify.tradingplatform.auth.dto.UserDto
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 
 @Service
 class UserService(
-    private val userRepository: MockUserRepository
+    private val userRepository: MockAccountRepository
 ) {
 
     /**
@@ -20,12 +20,12 @@ class UserService(
         return Mono.just(UserDto("Ask keycloak"))
     }
 
-    fun getUser(id: String): Mono<User> {
+    fun getUser(id: String): Mono<Account> {
         return userRepository.findById(id)
     }
 
-    fun createUser(id: String): Mono<User> {
-        return userRepository.save(User(id = id))
+    fun createUser(id: String): Mono<Account> {
+        return userRepository.save(Account(id = id))
     }
 
 }

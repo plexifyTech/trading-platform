@@ -30,11 +30,15 @@ const AppRoutes = ({ isAuth, isLoading }: RouterProps) => {
               index
               element={
                 isAuth ? (
-                  <Navigate to='/overview' replace />
+                  <Navigate to='/buyandsell' replace />
                 ) : (
                   <Navigate to='/login' />
                 )
               }
+            />
+            <Route
+              path='buyandsell'
+              element={isAuth ? <Marketplace /> : <Navigate to='/login' />}
             />
             <Route
               path='login'
@@ -43,10 +47,6 @@ const AppRoutes = ({ isAuth, isLoading }: RouterProps) => {
             <Route
               path='overview'
               element={isAuth ? <Overview /> : <Navigate to='/login' />}
-            />
-            <Route
-              path='buyandsell'
-              element={isAuth ? <Marketplace /> : <Navigate to='/login' />}
             />
           </Routes>
         </AppContent>

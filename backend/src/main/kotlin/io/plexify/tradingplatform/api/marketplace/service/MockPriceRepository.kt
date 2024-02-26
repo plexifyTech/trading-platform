@@ -18,7 +18,9 @@ class MockPriceRepository(
         coroutineScope {
             while (isActive){
                 sampleDataProvider.sampleData.forEach {
-                    emit(AssetPriceUpdate(it.key, generateStockPrice(it.value.name)))
+                    val newPrice = generateStockPrice(it.value.name)
+                    emit(AssetPriceUpdate(it.key, newPrice))
+                    it.value.prices.add(newPrice)
                 }
                 delay(1000)
             }

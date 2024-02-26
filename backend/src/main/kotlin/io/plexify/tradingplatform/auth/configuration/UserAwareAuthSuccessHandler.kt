@@ -1,6 +1,6 @@
 package io.plexify.tradingplatform.auth.configuration
 
-import io.plexify.tradingplatform.api.marketplace.data.entity.User
+import io.plexify.tradingplatform.api.marketplace.data.entity.Account
 import io.plexify.tradingplatform.auth.service.UserService
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.server.WebFilterExchange
@@ -23,7 +23,7 @@ class UserAwareAuthSuccessHandler(
             }
     }
 
-    private fun createUserIfAbsent(authentication: Authentication): Mono<User> {
+    private fun createUserIfAbsent(authentication: Authentication): Mono<Account> {
         return userService.getUser(authentication.name)
             .switchIfEmpty { userService.createUser(authentication.name) }
     }

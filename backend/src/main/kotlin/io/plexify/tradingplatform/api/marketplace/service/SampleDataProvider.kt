@@ -19,7 +19,7 @@ class SampleDataProvider {
                 res[id] = Asset(
                     id = id,
                     name = name,
-                    prices = listOf(generateStockPrice(name))
+                    prices = mutableListOf(generateStockPrice(name))
                 ).apply {
                     availableAssets = (0..10).random()
                 }

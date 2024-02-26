@@ -34,8 +34,7 @@ class PublicAssetHandler(
                     id = entry.key,
                     fields = AssetFields(
                         details = entry.value,
-                        buyUrl = buyUrl(entry.key),
-                        sellUrl = sellUrl(entry.key)
+                        buyUrl = buyUrl(entry.key)
                     )
                 )
             }
@@ -47,11 +46,6 @@ class PublicAssetHandler(
     private suspend fun buyUrl(id: String): String {
         val baseUrl = requestContextProvider.serverBaseUrl().awaitSingle()
         return "$baseUrl${pathConfig.apiBasePath}/$ASSET_PATH/$id/buy"
-    }
-
-    private suspend fun sellUrl(id: String): String {
-        val baseUrl = requestContextProvider.serverBaseUrl().awaitSingle()
-        return "$baseUrl${pathConfig.apiBasePath}/$ASSET_PATH/$id/sell"
     }
 
 

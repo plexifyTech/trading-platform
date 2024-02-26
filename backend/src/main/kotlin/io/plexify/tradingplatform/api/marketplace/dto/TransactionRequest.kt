@@ -1,5 +1,5 @@
 package io.plexify.tradingplatform.api.marketplace.dto
 
-class BuyRequest(
+class TransactionRequest(
     val price: Double
 )

@@ -6,7 +6,6 @@ interface Asset {
 interface AssetFields {
   details: AssetData;
   buyUrl: string;
-  sellUrl: string;
 }
 
 interface AssetData {
@@ -15,4 +14,23 @@ interface AssetData {
   prices: number[];
 }
 
-export type { Asset, AssetFields };
+interface Account {
+  portfolio: Share[];
+  balance: number;
+}
+
+interface Share {
+  id: string;
+  boughtForPrice: number;
+  label: string;
+  quantity: number;
+  sellUrl: string;
+}
+
+interface TransactionResponse {
+  success: boolean;
+  message: string;
+  account: Account;
+}
+
+export type { Asset, AssetFields, Account, Share, TransactionResponse };

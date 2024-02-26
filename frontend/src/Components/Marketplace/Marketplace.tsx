@@ -1,14 +1,17 @@
 import React, { useEffect, useRef } from 'react';
 import { pubTradingApiUrl } from '../../config';
-import { fetchAssets } from '../../api/assetApiCalls';
+import { fetchAssets, fetchAccount } from '../../api/assetApiCalls';
 import { CenertedDiv } from '../Common/styles';
 import { CircularProgress, Container, Stack, Typography } from '@mui/material';
-import { Asset } from '../../api/types';
+import { Account, Asset, Share } from '../../api/types';
 import AssetDetails from './AssetDetails';
 import { AxiosError } from 'axios';
+import OwnedAssetDetails from './OwnedAssetDetails';
+import { Wrapper } from './styles';
 
 const Marketplace = () => {
   const [assets, setAssets] = React.useState<Asset[]>([]);
+  const [account, setAccount] = React.useState<Account>();
   const [isInitialized, setIsInitialized] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string>();
   const eventSourceRef = useRef<EventSource | null>(null);
@@ -35,16 +38,24 @@ const Marketplace = () => {
   };
 
   useEffect(() => {
-    if (assets.length == 0) {
-      fetchAssets()
-        .then((res) => {
-          if (res != null) {
-            setAssets(res);
-          }
-        })
-        .catch((err: AxiosError) => setError(err.message))
-        .finally(() => setIsInitialized(true));
-    }
+    fetchAssets()
+      .then((res) => {
+        if (res != null) {
+          setAssets(res);
+        }
+      })
+      .catch((err: AxiosError) => setError(err.message))
+      .finally(() => setIsInitialized(true));
+  }, []);
+
+  useEffect(() => {
+    fetchAccount()
+      .then((res) => {
+        if (res != null) {
+          setAccount(res);
+        }
+      })
+      .catch((err: AxiosError) => setError(err.message));
   }, []);
 
   useEffect(() => {
@@ -72,17 +83,41 @@ const Marketplace = () => {
   }
 
   return (
-    <Container>
-      {assets.length > 0 ? (
-        assets.map((asset: Asset) => (
-          <AssetDetails key={asset.id} {...asset.fields} />
-        ))
-      ) : (
-        <CenertedDiv>
-          <CircularProgress />
-        </CenertedDiv>
+    <Wrapper>
+      {account != null && (
+        <Stack paddingTop='2rem' spacing={2}>
+          <Typography variant='h3'>BALANCE</Typography>
+          <Typography variant='h3'>
+            {Math.round((account.balance + Number.EPSILON) * 100) / 100} $
+          </Typography>
+          {account.portfolio.map((share: Share) => (
+            <OwnedAssetDetails
+              share={share}
+              onSoldCallback={function (account: Account): void {
+                setAccount(account);
+              }}
+            />
+          ))}
+        </Stack>
       )}
-    </Container>
+      <Container>
+        {assets.length > 0 ? (
+          assets.map((asset: Asset) => (
+            <AssetDetails
+              asset={asset.fields}
+              onTxSuccessCallback={function (account: Account): void {
+                setAccount(account);
+              }}
+              key={asset.id}
+            />
+          ))
+        ) : (
+          <CenertedDiv>
+            <CircularProgress />
+          </CenertedDiv>
+        )}
+      </Container>
+    </Wrapper>
   );
 };
 
