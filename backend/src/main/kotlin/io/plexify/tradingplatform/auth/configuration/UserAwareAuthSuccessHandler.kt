@@ -17,6 +17,7 @@ class UserAwareAuthSuccessHandler(
         webFilterExchange: WebFilterExchange,
         authentication: Authentication,
     ): Mono<Void> {
+        println("SUCCESS!!")
         return createUserIfAbsent(authentication)
             .flatMap {
                 super.onAuthenticationSuccess(webFilterExchange, authentication)

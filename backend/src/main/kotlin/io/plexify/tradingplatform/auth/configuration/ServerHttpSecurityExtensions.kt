@@ -70,7 +70,7 @@ fun ServerHttpSecurity.configureCsrfTokenFilter(): ServerHttpSecurity {
  * */
 fun ServerHttpSecurity.configureLogout(authConfig: AuthConfig): ServerHttpSecurity {
     return this.logout { logout: ServerHttpSecurity.LogoutSpec ->
-        val handler = KeycloakLogoutHandler()
+        val handler = KeycloakLogoutHandler(authConfig)
         val logoutSuccessUrl = authConfig.authSuccessUrl
         handler.setLogoutSuccessUrl(URI.create(logoutSuccessUrl))
         logout.logoutSuccessHandler(handler)

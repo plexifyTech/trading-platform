@@ -9,7 +9,9 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.util.UriComponentsBuilder
 import reactor.core.publisher.Mono
 
-class KeycloakLogoutHandler : RedirectServerLogoutSuccessHandler() {
+class KeycloakLogoutHandler(
+    private val keycloakConfig: AuthConfig
+) : RedirectServerLogoutSuccessHandler() {
     override fun onLogoutSuccess(
         exchange: WebFilterExchange,
         authentication: Authentication,
@@ -21,7 +23,7 @@ class KeycloakLogoutHandler : RedirectServerLogoutSuccessHandler() {
     }
 
     private fun logoutFromKeycloak(user: OidcUser): Mono<ResponseEntity<Void>> {
-        val endSessionEndpoint = user.issuer.toString() + "/protocol/openid-connect/logout"
+        val endSessionEndpoint = "${keycloakConfig.kcBackendAddr}/realms/trading-platform/protocol/openid-connect/logout"
         val uri =
             UriComponentsBuilder
                 .fromUriString(endSessionEndpoint)
@@ -31,6 +33,6 @@ class KeycloakLogoutHandler : RedirectServerLogoutSuccessHandler() {
             .get()
             .uri(uri)
             .retrieve()
-            .toBodilessEntity()
+            .toBodilessEntity().doOnError { println(it) }
     }
 }

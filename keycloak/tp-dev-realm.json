@@ -535,7 +535,8 @@
       "secret": "Z5laOBtS69tapQfzy1i6eQ5EpTDxLEHh",
       "redirectUris": [
         "http://localhost:8080/*",
-        "http://tpbackend:8080/*"
+        "http://tpbackend:8080/*",
+        "http://127.0.0.1:8080/*"
       ],
       "webOrigins": [
         "+"
@@ -548,7 +549,7 @@
       "directAccessGrantsEnabled": true,
       "serviceAccountsEnabled": false,
       "publicClient": false,
-      "frontchannelLogout": true,
+      "frontchannelLogout": false,
       "protocol": "openid-connect",
       "attributes": {
         "client.secret.creation.time": "1708763523",
@@ -2218,7 +2219,7 @@
     "oauth2DeviceCodeLifespan": "600",
     "parRequestUriLifespan": "60",
     "clientSessionMaxLifespan": "0",
-    "frontendUrl": "",
+    "frontendUrl": "http://127.0.0.1:8081",
     "acr.loa.map": "{}"
   },
   "keycloakVersion": "23.0.4",

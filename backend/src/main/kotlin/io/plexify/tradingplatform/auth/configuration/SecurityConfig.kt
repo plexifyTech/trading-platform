@@ -7,9 +7,10 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
 import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.oauth2.client.registration.ClientRegistration
-import org.springframework.security.oauth2.client.registration.ClientRegistrations
 import org.springframework.security.oauth2.client.registration.InMemoryReactiveClientRegistrationRepository
 import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository
+import org.springframework.security.oauth2.core.AuthorizationGrantType
+import org.springframework.security.oauth2.core.ClientAuthenticationMethod
 import org.springframework.security.web.server.SecurityWebFilterChain
 import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository
 import org.springframework.web.cors.CorsConfiguration
@@ -54,15 +55,26 @@ class SecurityConfig(
     }
 
     private fun keycloakClientRegistration(): ClientRegistration {
-        val baseUrl = authConfig.kcBaseUrl
         val realm = authConfig.realm
-        return ClientRegistrations
-            .fromOidcIssuerLocation("$baseUrl/$realm")
-            .registrationId("keycloak")
+        val kcFrontendAddr = authConfig.kcFrontendAddr
+        val kcBackendAddr = authConfig.kcBackendAddr
+        return ClientRegistration.withRegistrationId("keycloak")
             .clientId(authConfig.kcClientId)
             .clientSecret(authConfig.kcClientSecret)
+            .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+            .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+            //kc-backend
+            .authorizationUri("$kcBackendAddr/realms/$realm/protocol/openid-connect/auth")
+            .tokenUri("$kcBackendAddr/realms/$realm/protocol/openid-connect/token")
+            .userInfoUri("$kcBackendAddr/realms/$realm/protocol/openid-connect/userinfo")
+            .jwkSetUri("$kcBackendAddr/realms/$realm/protocol/openid-connect/certs")
+            .redirectUri("${pathConfig.serverAddr}/trading/{action}/oauth2/code/{registrationId}")
+            //kc-frontend
+            .authorizationUri("$kcFrontendAddr/realms/$realm/protocol/openid-connect/auth")
+            .issuerUri("$kcFrontendAddr/realms/$realm")
             .scope("openid", "offline_access", "profile")
             .clientName("Keycloak")
+            .userNameAttributeName("sub")
             .build()
     }
 

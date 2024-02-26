@@ -15,8 +15,10 @@ data class AuthConfig(
     val authFailureUrl: String,
     @Value("\${auth.success-url}")
     val authSuccessUrl: String,
-    @Value("\${auth.keycloak.base-url}")
-    val kcBaseUrl: String = "",
+    @Value("\${auth.keycloak.backend-addr}")
+    val kcBackendAddr: String = "",
+    @Value("\${auth.keycloak.frontend-addr}")
+    val kcFrontendAddr: String = "",
     @Value("\${auth.keycloak.realm}")
     val realm: String = "",
 )

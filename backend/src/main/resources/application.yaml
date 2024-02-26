@@ -13,7 +13,8 @@ auth:
     success-url: ${FRONTEND_ADDR:http://localhost:3000/}
     failure-url: ${FRONTEND_ADDR:http://localhost:3000/}/autherr
     keycloak:
-      base-url: ${KEYCLOAK_ADDR:http://localhost:8081}/realms
+      frontend-addr: ${KEYCLOAK_FE_ADDR:http://localhost:8081}
+      backend-addr: ${KEYCLOAK_BE_ADDR:http://localhost:8081}
       realm: trading-platform
 
 cors:
@@ -23,3 +24,5 @@ cors:
 api:
   base-path: /api/v1
   public-base-path: /api/v1/pub
+
+server-addr: ${BACKEND_ADDR:http://localhost:8080}

@@ -1,5 +1,5 @@
-export const backendBaseUrl = 'http://localhost:8080/trading';
-export const frontendBaseUrl = 'http://localhost:3000';
+export const backendBaseUrl = 'http://127.0.0.1:8080/trading';
+export const frontendBaseUrl = 'http://127.0.0.1:3000';
 export const loginUrl = `${backendBaseUrl}/oauth2/authorization/keycloak`;
 export const logoutUrl = `${backendBaseUrl}/logout`;
 export const userUrl = `${backendBaseUrl}/auth/user`;

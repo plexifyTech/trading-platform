@@ -99,7 +99,7 @@ class AssetTransactionServiceTest {
                 mockAccountRepository = mockMockRepo,
                 sampleDataProvider = sampleDataProvider,
                 requestContextProvider = mockRequestContextProvider,
-                pathConfig = PathConfig("/egal", "egal")
+                pathConfig = PathConfig("/egal", "egal", "egal")
             )
         )
     }

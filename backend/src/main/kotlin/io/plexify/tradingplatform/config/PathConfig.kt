@@ -9,4 +9,6 @@ data class PathConfig(
     val apiBasePath: String,
     @Value("\${api.public-base-path}")
     val apiPublicPath: String,
+    @Value("\${server-addr}")
+    val serverAddr: String,
 )
